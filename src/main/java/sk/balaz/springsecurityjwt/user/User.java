@@ -1,6 +1,8 @@
 package sk.balaz.springsecurityjwt.user;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -29,6 +31,7 @@ public class User implements UserDetails {
   private String lastName;
   private String email;
   private String password;
+  @Enumerated(EnumType.STRING)
   private Role role;
 
   @Override
