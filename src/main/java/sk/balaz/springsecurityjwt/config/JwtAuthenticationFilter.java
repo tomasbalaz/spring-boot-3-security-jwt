@@ -14,19 +14,24 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+  private final JwtService jwtService;
+
   @Override
   protected void doFilterInternal(
       @NonNull HttpServletRequest request,
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain) throws ServletException, IOException {
     String authorization = "Authorization";
-    final String authHeader = request.getHeader(authorization);
-    final String jwt;
+    String authHeader = request.getHeader(authorization);
+    String jwt;
+    String userEmail;
 
     if(authHeader == null || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
     jwt = authHeader.substring(authorization.length());
+    //TODO extract the user username from JWT token;
+    userEmail = jwtService.extractUserName(jwt);
   }
 }
