@@ -1,6 +1,8 @@
 package sk.balaz.springsecurityjwt.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import sk.balaz.springsecurityjwt.config.JwtService;
 import sk.balaz.springsecurityjwt.user.Role;
@@ -13,6 +15,7 @@ public class AuthenticationService {
 
   private final UserRepository userRepository;
   private final JwtService jwtService;
+  private final AuthenticationManager authenticationManager;
 
   public AuthenticationResponse register(RegisterRequest request) {
 
@@ -29,6 +32,18 @@ public class AuthenticationService {
   }
 
   public AuthenticationResponse authenticate(AuthenticateRequest request) {
-    return null;
+    // if user is not authenticated then throw an exception
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+            request.email(),
+            request.password()
+        )
+    );
+    //TODO Create UserNotFoundException and catch it via @RestControllerAdvice
+    var user = userRepository.findByEmail(request.email())
+        .orElseThrow();
+    var jwtToken = jwtService.generateToken(user);
+
+    return new AuthenticationResponse(jwtToken);
   }
 }
