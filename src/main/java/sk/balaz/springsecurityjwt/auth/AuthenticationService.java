@@ -22,6 +22,7 @@ public class AuthenticationService {
     var user = User.builder()
         .fistName(request.firstName())
         .lastName(request.lastName())
+        .email(request.email())
         .password(request.password())
         .role(Role.ADMIN)
         .build();
